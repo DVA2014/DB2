@@ -17,7 +17,10 @@ WHERE name NOT LIKE '% %';
 
 SELECT name
 FROM track
-WHERE name LIKE '%my%' OR name LIKE '%My%';
+WHERE name ILIKE 'my %'
+OR name ILIKE '% my'
+OR name ILIKE '% my %'
+OR name ILIKE 'my';
 
 SELECT g.name, COUNT(artist_id)
 FROM genre AS g
@@ -31,9 +34,12 @@ GROUP BY a.albumid;
 
 SELECT ar.name
 FROM artist AS ar
-LEFT JOIN artist_album AS aa ON ar.artistid = aa.artist_id
-LEFT JOIN album AS al ON aa.album_id = al.albumid AND al.release_year = 2020
-WHERE al.albumid IS NULL;
+WHERE ar.name NOT IN (
+SELECT ar.name
+FROM artist
+JOIN artist_album AS aa ON ar.artistid = aa.artist_id
+JOIN album AS al ON aa.album_id = al.albumid 
+WHERE al.release_year = 2020);
 
 SELECT DISTINCT c.name
 FROM collection AS c
